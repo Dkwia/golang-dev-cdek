@@ -34,7 +34,9 @@ func RunMigrations(pool *pgxpool.Pool) error {
 	if err != nil {
 		return fmt.Errorf("open sql db: %w", err)
 	}
-	defer db.Close()
+	defer func() {
+		_ = db.Close()
+	}()
 
 	driver, err := postgresmigrate.WithInstance(db, &postgresmigrate.Config{})
 	if err != nil {
@@ -50,6 +52,9 @@ func RunMigrations(pool *pgxpool.Pool) error {
 	if err != nil {
 		return fmt.Errorf("create migrator: %w", err)
 	}
+	defer func() {
+		_, _ = migrator.Close()
+	}()
 
 	if err := migrator.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("apply migrations: %w", err)

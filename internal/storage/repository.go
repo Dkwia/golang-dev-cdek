@@ -313,7 +313,9 @@ func (r *Repository) ReserveItem(ctx context.Context, token string, itemID int64
 	if err != nil {
 		return domain.Item{}, err
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		_ = tx.Rollback(ctx)
+	}()
 
 	var wishlistID int64
 	err = tx.QueryRow(ctx, `
