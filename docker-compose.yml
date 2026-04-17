@@ -3,6 +3,10 @@ services:
     image: postgres:16-alpine
     env_file:
       - .env.example
+    environment:
+      POSTGRES_DB: wishlist
+      POSTGRES_USER: wishlist
+      POSTGRES_PASSWORD: wishlist
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
